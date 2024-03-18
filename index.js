@@ -1,18 +1,32 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = 3000;
 
-app.use(bodyParser.json());
+app.use(express.json()); 
+app.use(express.urlencoded()); 
 
 app.post('/bfhl', (req, res) => {
   try {
     const data = req.body.data;
 
-    const evenNumbers = data.filter(num => parseInt(num) % 2 === 0);
-    const oddNumbers = data.filter(num => parseInt(num) % 2 !== 0);
-    const alphabets = data.filter(char => /^[a-zA-Z]$/.test(char)).map(char => char.toUpperCase());
+    const evenNumbers = [];
+    const oddNumbers = [];
+    const alphabets = [];
+
+    for (let x of data) {
+        if (isNaN(x)) {
+            alphabets.push(x); 
+        } else {
+            const d = parseInt(x);
+            if (d % 2 == 0) {
+                evenNumbers.push(x);
+            } else {
+                oddNumbers.push(x);
+            }
+        }
+    }
+  
 
     const user = {
       user_id: "navya_gupta_14062003",
@@ -32,7 +46,9 @@ app.post('/bfhl', (req, res) => {
 
     res.json(response);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+        is_success: false,
+    })
   }
 });
 
